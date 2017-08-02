@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MockApp</string>
+    <string name="sos">SOS</string>
+    <string name="Name">Name</string>
+    <string name="Number">Phone</string>
+    <string name="btnsndtoall">SEND TO ALL</string>
+    <string name="Nameofsosreciever">Name of sos receiver</string>
+    <string name="Add">Add</string>
+    <string name="Phoneofsosreciever">Phone of sos receiver</string>
+    <string name="showall">show all</string>
+    <string-array name="system">
+        <item>@string/Nameofsosreciever</item>
+        <item>@string/Phoneofsosreciever</item>
+    </string-array>
+    <string name="delete">Delete</string>
+</resources>
