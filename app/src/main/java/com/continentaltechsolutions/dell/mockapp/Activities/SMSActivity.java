@@ -1,12 +1,15 @@
 package com.continentaltechsolutions.dell.mockapp.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -48,12 +51,14 @@ public class SMSActivity extends AppCompatActivity {
     double Chk_in_longitude;
     double Chk_in_latitude;
     String Chk_in_address;
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms);
-
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
         helper = new Helper(this, this);
         gps = new TrackGPS(SMSActivity.this);
 
@@ -112,6 +117,8 @@ public class SMSActivity extends AppCompatActivity {
 
     private void Refresh() {
         try {
+            pDialog.setMessage("Loading...");
+            showDialog();
             pn.clear();
             sosmsgList.clear();
 
@@ -142,7 +149,9 @@ public class SMSActivity extends AppCompatActivity {
             listView1 = (ListView) findViewById(R.id.list);
             listView1.clearChoices();
             listView1.setAdapter(adapter);
+            hideDialog();
         } catch (Exception e) {
+            hideDialog();
             e.printStackTrace();
             Toast.makeText(this, "Error. Please Try Again...", Toast.LENGTH_SHORT).show();
         }
@@ -171,7 +180,7 @@ public class SMSActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.add_sms_no, menu);
         return true;
     }
 
@@ -180,14 +189,19 @@ public class SMSActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.addSMS:
                 Toast.makeText(this, "Add Phone Number to SMS", Toast.LENGTH_SHORT).show();
+                pDialog.setMessage("Loading...");
+                showDialog();
                 Intent int1 = new Intent(getApplicationContext(), AddSMSActivity.class);
                 startActivity(int1);
+                hideDialog();
                 break;
         }
         return true;
     }
 
     protected void sendSMSMessage(String txtphoneNo) {
+        pDialog.setMessage("Loading...");
+        showDialog();
         SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm a");
         Calendar c = Calendar.getInstance();
         final String formattedDate = df.format(c.getTime());
@@ -212,18 +226,16 @@ public class SMSActivity extends AppCompatActivity {
                         MY_PERMISSIONS_REQUEST_SEND_SMS);
             }
         } else {
-            try
-            {
+            try {
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(phoneNo, null, message, null, null);
                 Toast.makeText(SMSActivity.this, "SMS sent for " + phoneNo, Toast.LENGTH_LONG).show();
-            }
-            catch (Exception e)
-            {
-                Toast.makeText(SMSActivity.this,"SMS failed, please try again for " + phoneNo,Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Toast.makeText(SMSActivity.this, "SMS failed, please try again for " + phoneNo, Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
         }
+        hideDialog();
     }
 
     @Override
@@ -266,34 +278,59 @@ public class SMSActivity extends AppCompatActivity {
                                     ContextMenu.ContextMenuInfo menuInfo) {
 
         MenuInflater inflater = this.getMenuInflater();
-        inflater.inflate(R.menu.actions, menu);
+        inflater.inflate(R.menu.delete_sms_no, menu);
         super.onCreateContextMenu(menu, v, menuInfo);
 
     }
 
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
 
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        @SuppressWarnings("unused")
-        String[] names = getResources().getStringArray(R.array.system);
-        switch (item.getItemId()) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(
+                this);
+        builder1.setCancelable(false)
+                .setMessage("Are you sure you want to delete this contact?")
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
 
-            case R.id.delete:
-                Toast.makeText(this, "You have chosen the " + getResources().getString(R.string.delete) +
-                                " context menu option for " + nm.get((int) info.id),
-                        Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                                @SuppressWarnings("unused")
+                                String[] names = getResources().getStringArray(R.array.system);
+                                switch (item.getItemId()) {
 
-                boolean po = m(nm.get((int) info.id));
-                if (po == false) {
-                    //getActivity().finish();
-                    Log.d(TAG, "po == false");
-                }
-                Refresh();
-                return true;
+                                    case R.id.delete:
+                                        Toast.makeText(SMSActivity.this, "You have chosen the " + getResources().getString(R.string.delete) +
+                                                        " context add_sms_no option for " + nm.get((int) info.id),
+                                                Toast.LENGTH_SHORT).show();
 
-            default:
-                return super.onContextItemSelected(item);
-        }
+                                        boolean po = m(nm.get((int) info.id));
+                                        if (po == false) {
+                                            //getActivity().finish();
+                                            Log.d(TAG, "po == false");
+                                        }
+                                        Refresh();
+                                        break;
+
+                                   /* default:
+                                        return super.onContextItemSelected(item);*/
+                                }
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.cancel();
+                            }
+                        });
+        final AlertDialog alert1 = builder1.create();
+        alert1.show();
+
+        return true;
     }
 
     boolean m(String a) {
@@ -344,5 +381,15 @@ public class SMSActivity extends AppCompatActivity {
         }
         adapter.notifyDataSetChanged();
         return true;
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 }

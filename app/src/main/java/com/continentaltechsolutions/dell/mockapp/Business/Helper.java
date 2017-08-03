@@ -35,13 +35,9 @@ public class Helper {
     public boolean checkPermission(){
         int result = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED){
-
             return true;
-
         } else {
-
             return false;
-
         }
     }
 
@@ -100,16 +96,16 @@ public class Helper {
         }
     }
 
-    public int loadSavedPreferences(String spName,String key) {
+    public String loadSavedPreferences(String spName,String key) {
         SharedPreferences sharedPreferences =  mContext.getSharedPreferences(spName, 0);
-        Integer value = sharedPreferences.getInt(key,0);
+        String value = sharedPreferences.getString(key,"");
         return value;
     }
 
-    public  void savePreferences(String key, Integer value) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("Sp",0); //mContext.getSharedPreferences("Sp", 0);
+    public void savePreferences(String key, String value) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("SOS",0); //mContext.getSharedPreferences("Sp", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(key, value);
+        editor.putString(key, value);
         editor.commit();
     }
 }

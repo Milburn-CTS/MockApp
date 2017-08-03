@@ -13,7 +13,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,7 +35,6 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
-    EditText edTxtCall, edTxtSMS;
     Button btnCall, btnSMS;
     String phoneNo;
     String message;
@@ -49,22 +52,22 @@ public class MainActivity extends AppCompatActivity {
 
         helper = new Helper(this, this);
         gps = new TrackGPS(MainActivity.this);
-        //Getting the edittext and button instance
-        edTxtCall = (EditText) findViewById(R.id.edTxtCall);
-        edTxtSMS = (EditText) findViewById(R.id.edTxtSMS);
+        //Getting the button instance
         btnCall = (Button) findViewById(R.id.btnCall);
         btnSMS = (Button) findViewById(R.id.btnSMS);
 
-        //DEVICEID = helper.loadSavedPreferences("Sp", "DEVICEID");
-
+        phoneNo = helper.loadSavedPreferences("SOS", "PHONENO");
+        if (phoneNo == null || phoneNo == "") {
+            AddPhoneNo();
+        }
         //Performing action on button click
         btnCall.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                String number = edTxtCall.getText().toString();
+
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + number));
+                callIntent.setData(Uri.parse("tel:" + phoneNo));
                 if (ActivityCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
@@ -115,6 +118,55 @@ public class MainActivity extends AppCompatActivity {
         return sos;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.add_phone_no, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.addPhone:
+                Toast.makeText(this, "Add Phone Number", Toast.LENGTH_SHORT).show();
+                AddPhoneNo();
+                break;
+        }
+        return true;
+    }
+
+
+    public  void AddPhoneNo()
+    {
+         /* Alert Dialog Code Start*/
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final EditText edittext = new EditText(this);
+        edittext.setText(String.valueOf(phoneNo));
+        edittext.setRawInputType(InputType.TYPE_CLASS_PHONE);
+        alert.setMessage("Enter Phone Number");
+        alert.setTitle("SOS");
+        alert.setView(edittext);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                phoneNo = edittext.getText().toString();
+                helper.savePreferences("PHONENO", phoneNo);
+                Log.e(TAG, "Phone No: " + phoneNo);
+                Toast.makeText(MainActivity.this, "Your SOS Phone number is set to " + phoneNo, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
+        /* Alert Dialog Code End*/
+    }
     // Hardware Back Button
     public void onBackPressed() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(
@@ -149,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         final String formattedDate = df.format(c.getTime());
         setGPSCoordinates();
-        phoneNo = edTxtCall.getText().toString();
-        String newMsg = edTxtSMS.getText().toString();
+        phoneNo = "";//edTxtCall.getText().toString();
+        String newMsg = "";//edTxtSMS.getText().toString();
 
         String defaultMsg = "Help me now as I might be in trouble. " + formattedDate + " " + Chk_in_address + " " + "http://maps.google.com/?q=" + Chk_in_latitude + "," + Chk_in_longitude;
         if (newMsg != null)

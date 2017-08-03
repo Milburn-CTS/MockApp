@@ -12,33 +12,17 @@
 
     <Button
         android:id="@+id/btnCall"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="118dp"
         android:text="Call" />
 
-    <EditText
-        android:id="@+id/edTxtCall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:ems="10" />
-
     <Button
         android:id="@+id/btnSMS"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="SMS" />
-
-    <EditText
-        android:id="@+id/edTxtSMS"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textMultiLine" />
 
 </LinearLayout>

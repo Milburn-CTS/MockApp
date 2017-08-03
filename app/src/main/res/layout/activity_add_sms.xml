@@ -10,28 +10,25 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="45dp"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="56dp"
-        android:text="@string/Name" />
+        android:layout_marginTop="16dp"
+        android:text="@string/Name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView1"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_alignParentRight="true"
         android:layout_marginLeft="54dp"
-        android:layout_marginStart="54dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:layout_toRightOf="@+id/textView1"
         android:ems="10"
         android:hint="@string/Nameofsosreciever"
-        android:inputType="text" >
+        android:inputType="text"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/textView1"
+        android:layout_alignEnd="@+id/editText2"
+        android:layout_marginEnd="10dp">
 
         <requestFocus />
     </EditText>
@@ -40,15 +37,11 @@
         android:id="@+id/editText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText1"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/editText1"
-        android:layout_below="@+id/editText1"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="@string/Phoneofsosreciever"
-        />
+        android:layout_below="@+id/textView2"
+        android:layout_alignStart="@+id/textView2" />
 
     <TextView
         android:id="@+id/textView2"
@@ -64,7 +57,9 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:text="@string/Add" />
+        android:text="@string/Add"
+        android:layout_below="@+id/editText2"
+        android:layout_toEndOf="@+id/textView2"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="32dp" />
 </RelativeLayout>

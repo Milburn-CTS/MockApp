@@ -1,5 +1,6 @@
 package com.continentaltechsolutions.dell.mockapp.Activities;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,7 +31,7 @@ public class AddSMSActivity extends AppCompatActivity implements View.OnClickLis
     private Pattern pattern;
     private Matcher matcher;
     private ArrayList<Map<String, String>> mPeopleList;
-
+    private ProgressDialog pDialog;
     private SimpleAdapter mAdapter;
     private AutoCompleteTextView mTxtPhoneNo;
 
@@ -38,7 +39,8 @@ public class AddSMSActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_sms);
-
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
         add = (Button) findViewById(R.id.button1);
         nameEditText = (EditText) findViewById(R.id.editText1);
         numberEditText = (EditText) findViewById(R.id.editText2);
@@ -65,7 +67,8 @@ public class AddSMSActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void PopulatePeopleList() {
-
+        pDialog.setMessage("Loading...");
+        showDialog();
         mPeopleList.clear();
 
         Cursor people = AddSMSActivity.this.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
@@ -120,6 +123,7 @@ public class AddSMSActivity extends AppCompatActivity implements View.OnClickLis
         people.close();
 
         this.startManagingCursor(people);
+        hideDialog();
     }
 
     @Override
@@ -183,4 +187,13 @@ public class AddSMSActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
 }
